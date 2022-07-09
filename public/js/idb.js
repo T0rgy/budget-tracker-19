@@ -1,18 +1,18 @@
-// Variable for the database connection
+// database connection
 let db;
 
-// Create a connection to IndexedDB db called 'budget-manager'
-const request = indexedDB.open('budget_manager', 1);
+// connection to IndexedDB db called 'budget_tracker'
+const request = indexedDB.open('budget_tracker', 1);
 
-// This event emits if the DB version changes
+// event emits if the DB version changes
 request.onupgradeneeded = function(event) {
-    // Creates a reference to the database
+    // reference to the database
     const db = event.target.result;
-    // Create object store (table) named 'new_transaction'
+    // object store (table) named 'new_transaction'
     db.createObjectStore('new_transaction', { autoIncrement: true });
 };
 
-// Upon success
+// upon success
 request.onsuccess = function(event) {
     // save in global variable
     db = event.target.result;
@@ -27,26 +27,26 @@ request.onerror = function(event) {
     console.log(event.target.errorCode);
 };
 
-// Execute if a new transaction is submitted while offline
+// execute if a new transaction is submitted while offline
 function saveRecord(record) {
-    // Open a channel with the db and grant read/write permission
+    // open a channel with the db and grant read/write permission
     const transaction = db.transaction(['new_transaction'], 'readwrite');
 
-    // Access the object store for 'new_transaction'
+    // access the object store for 'new_transaction'
     const transactionObjectStore = transaction.objectStore('new_transaction');
 
-    // Add new record to the store
+    // add new record to the store
     transactionObjectStore.add(record);
 };
 
 function uploadTransaction() {
-    // Open a channel with the db and grant read/write permission
+    // open a channel with the db and grant read/write permission
     const transaction = db.transaction(['new_transaction'], 'readwrite');
 
-    // Access the object store for 'new_transaction'
+    // access the object store for 'new_transaction'
     const transactionObjectStore = transaction.objectStore('new_transaction');
 
-    // Get all records from store and set to a variable
+    // get all records from store and set to a variable
     const getAll = transactionObjectStore.getAll();
     
     // upon successful getAll
@@ -82,5 +82,5 @@ function uploadTransaction() {
     };
 }
 
-// Listen for the app to come back online
+// listen for the app to come back online
 window.addEventListener('online', uploadTransaction);
